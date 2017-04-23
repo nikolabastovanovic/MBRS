@@ -1,0 +1,2 @@
+# MBRS
+Generator Django aplikacije
