@@ -1,0 +1,16 @@
+model Grad{
+	naziv = CharField(max_length = 5, null = True)
+	oblast = CharField(max_length = 5)
+	postanski_broj = IntegerField(null = True, default = 1)
+};
+
+model Osoba{
+    grad = ForeignKey(model = Grad, on_delete = models.CASCADE)
+	ime = CharField(max_length = 5, null = True, default = 1)
+	prezime = CharField(max_length = 6, null = True)
+	jmbg = IntegerField(default = 0)
+	bracno_stanje = CharField(max_length = 6)
+	zaposlenje = CharField(max_length = 6, default = 0)
+	email = EmailField(max_length = 64,  null = False)
+	datum_rodjenja = DateTimeField(default = timezone.datetime.year)
+};

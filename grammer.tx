@@ -1,0 +1,85 @@
+Models:
+	models *= Model
+;
+
+Model:
+	'model' name = ID '{'
+	elements *= ModelElement
+	'}'';'
+;
+
+ModelElement:
+	name = ID '=' datatype = DataType
+;
+
+DataType:
+    charfield = CharField | emailfield  = EmailField | foreignkey = ForeignKey | datetimefield = DateTimeField | integerfield = IntegerField | booleanfield = BooleanField
+;
+
+CharField:
+    'CharField' '(' parameters *= Parameters[','] ')'
+;
+
+EmailField:
+    'EmailField' '(' parameters *= Parameters[','] ')'
+;
+
+ForeignKey:
+    'ForeignKey' '(' 'model' '=' classs = Classs ',' parameters *= Parameters[','] ')'
+;
+
+Classs:
+    ID
+;
+
+DateTimeField:
+    'DateTimeField' '(' parameters *= Parameters[','] ')'
+;
+
+IntegerField:
+    'IntegerField' '(' parameters *= Parameters[','] ')'
+;
+
+BooleanField:
+    'BooleanField' '(' parameters *= Parameters[','] ')'
+;
+
+Parameters:
+    max_length = MaxLength | null = Null | default = Default | blank = Blank | on_delete = OnDelete
+;
+
+MaxLength:
+    'max_length' '=' number = Number
+;
+
+Default:
+    'default' '=' number = Number | timezone = Timezone
+;
+
+Number:
+    /[0-9]+/
+;
+
+Null:
+    'null' '=' value = Value
+;
+
+Blank:
+    'blank' '=' value = Value
+;
+
+Value:
+    'True' | 'False'
+;
+
+Timezone:
+    'timezone.' var = Var
+;
+
+Var:
+    'now' | 'datetime.year' | 'datetime.month' | 'datetime.day' | 'datetime.hour'
+;
+
+OnDelete:
+    'on_delete' '=' 'models.CASCADE'
+;
