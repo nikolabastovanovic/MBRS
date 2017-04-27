@@ -338,7 +338,7 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
 
 
                 elif element.datatype.emailfield is not None:
-                    string += 'CharField' + "("
+                    string += 'EmailField' + "("
 
                     if len(element.datatype.emailfield.parameters) == 0:
                         string += ")"
@@ -482,16 +482,18 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
 
     #Generator koda za views.py
     def test2(models):
-        string = 'from django.views import generic\nfrom django.views.generic.edit import CreateView, UpdateView, DeleteView\nfrom django.core.urlresolvers import reverse_lazy, reverse\n'
+        string = 'from django.views import generic\nfrom django.views.generic.edit import CreateView, UpdateView, DeleteView\nfrom django.core.urlresolvers import reverse_lazy, reverse\nfrom django.shortcuts import render\n'
         for model in models:
             string += '\n'
             string += 'from .models import ' + str(model['model'])
+        string += '\n\ndef index(request):\n'
+        string += '\treturn render(request, ' + "'" + 'layout/index.html' + "')\n"
         for model in models:
             #CreateView generator
             string += '\n\n'
             string += '#Create view for ' + str(model['model']) + ' model.\n'
             string += 'class ' + str(model['model']) + 'CreateView' + '(CreateView):'
-            string += '\n\ttemplate_name=' + "'" + '.html' + "'"
+            string += '\n\ttemplate_name=' + "'" + 'layout/' + str(model['model']) + 'CreateView.html' + "'"
             string += '\n\tmodel=' + str(model['model'])
             string += '\n\tfields=['
             last = len(model['elements']) - 1
@@ -501,13 +503,13 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
                     string += ']'
                 else:
                     string += ', '
-            string += '\n\tsuccess_url=reverse_lazy(' + "'" + "'" + ")"
+            string += '\n\tsuccess_url=reverse_lazy(' + "'myapp:" + str(model['model']) + "ListView'" + ")"
 
             # UpdateView generator
             string += '\n\n'
             string += '#Update view for ' + str(model['model']) + ' model.\n'
             string += 'class ' + str(model['model']) + 'UpdateView' + '(UpdateView):'
-            string += '\n\ttemplate_name=' + "'" + '.html' + "'"
+            string += '\n\ttemplate_name=' + "'" + 'layout/' + str(model['model']) + 'UpdateView.html' + "'"
             string += '\n\tmodel=' + str(model['model'])
             string += '\n\tfields=['
             last = len(model['elements']) - 1
@@ -517,6 +519,7 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
                     string += ']'
                 else:
                     string += ', '
+            string += '\n\tsuccess_url=reverse_lazy(' + "'myapp:" + str(model['model']) + "ListView'" + ")"
 
             # DeleteView generator
             string += '\n\n'
@@ -530,10 +533,10 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
             string += '\n\n'
             string += '#List view for ' + str(model['model']) + ' model.\n'
             string += 'class ' + str(model['model']) + 'ListView' + '(generic.ListView):'
-            string += '\n\ttemplate_name=' + "'" + '.html' + "'"
+            string += '\n\ttemplate_name=' + "'layout/" + str(model['model']) + 'ListView.html' + "'"
             string += '\n\tcontext_object_name=' + "'" + 'all_' + str(model['model']) + "'"
             string += '\n\tdef get_queryset(self):'
-            string += '\n\t\treturn ' + str(model['model']) + '.object.all'
+            string += '\n\t\treturn ' + str(model['model']) + '.objects.all'
 
         return string
 
@@ -545,7 +548,42 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
     def test3(models):
         string = 'from django.conf.urls import url\nfrom . import views\n'
         string += '\n' + 'app_name = ' + "'" + 'myapp' + "'"
-        string += '\n\nurlspaterns = [' + '\n\n' + ']'
+        string += '\n\nurlpatterns = [' + '\n'
+        string += '\t#Generated index/Home page url\n'
+        string += '\turl(r'+"'"+'^$'+"'"+', views.index, name='+"'"+'index'+"'"+'),\n\n'
+        for model in models:
+            string += '\t#Generated ' + str(model['model']) + ' ListView url\n'
+            string += '\turl(r' + "'" + '^'
+            string += str(model['model']) + '/List/$' + "'" + ', views.'
+            string += str(model['model']) + 'ListView.as_view(), name=' + "'"
+            string += str(model['model']) + 'ListView' + "'),\n"
+        string += '\n'
+
+        for model in models:
+            string += '\t#Generated ' + str(model['model']) + ' CreateView url\n'
+            string += '\turl(r' + "'" + '^'
+            string += str(model['model']) + '/Create/$' + "'" + ', views.'
+            string += str(model['model']) + 'CreateView.as_view(), name=' + "'"
+            string += str(model['model']) + 'CreateView' + "'),\n"
+        string += '\n'
+
+        for model in models:
+            string += '\t#Generated ' + str(model['model']) + ' UpdateView url\n'
+            string += '\turl(r' + "'" + '^'
+            string += str(model['model']) + '/Update/(?P<pk>[0-9]+)/$' + "'" + ', views.'
+            string += str(model['model']) + 'UpdateView.as_view(), name=' + "'"
+            string += str(model['model']) + 'UpdateView' + "'),\n"
+        string += '\n'
+
+        for model in models:
+            string += '\t#Generated ' + str(model['model']) + ' DeleteView url\n'
+            string += '\turl(r' + "'" + '^'
+            string += str(model['model']) + '/Delete/(?P<pk>[0-9]+)/$' + "'" + ', views.'
+            string += str(model['model']) + 'DeleteView.as_view(), name=' + "'"
+            string += str(model['model']) + 'DeleteView' + "'),\n"
+
+
+        string += ']'
 
         return string
 
@@ -573,7 +611,7 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
         a = test4(models1)
         f.write(a)
 
-
+    #Generator koda za urls.py u okviru projekta
     def test5(models):
         string = '"""prject URL Configuration\n\n'
         string += 'The `urlpatterns` list routes URLs to views. For more information please see:\n\t'
@@ -610,24 +648,171 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
         os.makedirs(newpath)
 
 
-    #Generator index.html stranice
+    #Generator base.html stranice
     def test6(models):
         string = '<!DOCTYPE html>\n'
         string += '<html lang = "en">\n'
         string += '<head>\n'
         string += '\t<meta charset = "UTF-8">\n'
         string += '\t<title> {% block title %}MyApp{% endblock %} </title>\n'
-        string += '\t{% load staticfiles %}\n'
-        string += '\t<script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>\n'
-        string += '\t<script src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>\n'
+        string += '\t<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">\n'
+        string += '\t<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">\n'
+        string += '\t<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>\n'
         string += '</head>\n'
-        string += '<body>\n'
-        string += '</body>\n'
+        string += '<body background="http://www.designbolts.com/wp-content/uploads/2013/02/Grunge-Seamless-Pattern-For-Website-Background.jpg">\n'
+        string += '\t<nav class="navbar navbar-inverse">\n'
+        string += '\t\t<div class="container-fluid">\n'
+        string += '\t\t\t<div class="navbar-header">\n'
+        string += '\t\t\t\t<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavBar">\n'
+        string += '\t\t\t\t\t<span class="icon-bar"></span>\n'
+        string += '\t\t\t\t\t<span class="icon-bar"></span>\n'
+        string += '\t\t\t\t\t<span class="icon-bar"></span>\n'
+        string += '\t\t\t\t</button>\n'
+        string += '\t\t\t\t<a class="navbar-brand" href="{% url '+"'"+'myapp:index'+"'"+' %}" style="color:white">My App</a>\n'
+        string += '\t\t\t</div>\n'
+        string += '\t\t\t<div class="collapse navbar-collapse" id="topNavBar"></div>\n'
+        string += '\t\t</div>\n'
+        string += '\t</nav>\n'
 
+        string += '\t<div class="col-md-9">\n'
+        string += '\t\t{% block body %}\n\n'
+        string += '\t\t{% endblock %}\n'
+        string += '\t</div>\n'
+
+        string += '</body>\n'
 
         return string
 
 
-    with open('C:/Users/Johny/Desktop/mrk/mysite/myapp/templates/layout/index.html', 'w') as f:
-        a = test6(models)
+    with open('C:/Users/Johny/Desktop/mrk/mysite/myapp/templates/layout/base.html', 'w') as f:
+        a = test6(models1)
         f.write(a)
+
+
+    #Generator index.html stranice
+    def test7(models):
+        string = '{% extends '+"'"+'layout/base.html'+"'" + ' %}' +'\n\n'
+        string += '{% block body %}\n\n'
+
+        for model in models:
+            string += '<a href="{% url ' + "'" + 'myapp:'
+            string += str(model['model']) + 'ListView' + "'" + '%}'
+            string += '"><div style="background-color:#F7F3F3; color:black; width:25.33%; height:250px; float:left; margin:4%; border-radius:25%">\n'
+            string += '\t' + str(model['model']) + '\n'
+            string += '</div></a>\n'
+
+
+        string += '\n{% endblock %}\n'
+
+        return string
+
+    with open('C:/Users/Johny/Desktop/mrk/mysite/myapp/templates/layout/index.html', 'w') as f:
+        a = test7(models1)
+        f.write(a)
+
+
+    #Generator templejta form.html
+    def test8(models):
+        string = '{% for field in form %}\n'
+        string += '<div class="form-group">\n'
+        string += '\t<div class="col-sm-offset-2 col-sm-12">\n'
+        string += '\t\t<div class="col-sm-offset-6 col-sm-6">\n'
+        string += '\t\t\t<span class="text-danger small">{{ field.error }}</span>\n'
+        string += '\t\t</div>\n'
+        string += '\t\t<label class="control-label col-sm-2">{{ field.label_tag }}</label>\n'
+        string += '\t\t<div class="col-sm-10">{{ field }}</div>\n'
+        string += '\t</div>\n'
+        string += '</div>\n'
+        string += '{% endfor %}\n'
+
+        return string
+
+    with open('C:/Users/Johny/Desktop/mrk/mysite/myapp/templates/layout/form.html', 'w') as f:
+        a = test8(models1)
+        f.write(a)
+
+
+    #Generator ListView html za svaki model
+    for model in models:
+        def test9(models, model):
+            string = '{% extends ' + "'" + 'layout/base.html' + "'" + '%}\n\n'
+            string += '{% block body %}\n'
+            string += '\t{% if all_' + str(model.name) + ' %}\n'
+            string += '\t\t<style>\n'
+            string += '\t\t\ttable, th, td {\n'
+            string += '\t\t\t\tborder: 2px solid black;\n'
+            string += '\t\t\t\tpadding: 10px;\n'
+            string += '\t\t\t\tmargin: 10%;\n'
+            string += '\t\t\t\tmargin-bottom: 1%;\n'
+            string += '\t\t\t}\n'
+            string += '\t\t</style>\n'
+            string += '\t\t<table style="width:100%">\n'
+            string += '\t\t\t<tr bgcolor="#D3D6FF">\n'
+            for element in model.elements:
+                string += '\t\t\t\t<th style="text-align:center">' + element.name.upper() + ':</th>\n'
+            string += '\t\t\t\t<th></th>\n'
+            string += '\t\t\t</tr>\n'
+            string += '\t\t{% for var in all_' + str(model.name) + ' %}\n'
+            string += '\t\t\t<tr>\n'
+            for element in model.elements:
+                string += '\t\t\t\t<td style="text-align:center">{{ var.' + element.name + ' }}</td>\n'
+            string += '\t\t\t\t<td>\n'
+            string += '\t\t\t\t\t<button type="submit" class="btn btn-warning btn-sm" style="width:47%" data-toggle="tooltip" data-placement="top" title="Edit">\n'
+            string += '\t\t\t\t\t\t<span class="glyphicon glyphicon-edit"></span>\n'
+            string += '\t\t\t\t\t</button>\n'
+            string += '\t\t\t\t\t<button type="submit" class="btn btn-danger btn-sm" style="width:47%" data-toggle="tooltip" data-placement="top" title="Delete">\n'
+            string += '\t\t\t\t\t\t<span class="glyphicon glyphicon-trash"></span>\n'
+            string += '\t\t\t\t\t</button>\n'
+            string += '\t\t\t\t</td>\n'
+            string += '\t\t\t</tr>\n'
+            string += '\t\t{% endfor %}\n'
+            string += '\t\t</table>\n'
+            string += '\t{% endif %}\n'
+            string += '\t<a href="{% url ' + "'" + 'myapp:' + str(model.name) + 'CreateView' + "'" + ' %}">\n'
+            string += '\t\t<button style="margin-left:10%; width:100%" class="btn btn-primary">Add New ' + str(model.name) + '</button>\n'
+            string += '\t</a>\n'
+            string += '{% endblock %}\n'
+
+            return string
+
+
+        with open('C:/Users/Johny/Desktop/mrk/mysite/myapp/templates/layout/'+str(model.name)+'ListView.html', 'w') as f:
+            a = test9(models1, model)
+            f.write(a)
+
+    # Generator CreateView html za svaki model
+    for model in models:
+        def test10(models, model):
+            string = '{% extends ' + "'" + 'layout/base.html' + "'" + '%}\n\n'
+            string += '{% block body %}\n'
+            string += '\t<div class="container-fluid">\n'
+            string += '\t\t<div class="row">\n'
+            string += '\t\t\t<div class="col-sm-9 col-md-10">\n'
+            string += '\t\t\t\t<div class="panel-body">\n'
+            string += '\t\t\t\t\t<form class="form-horizontal" action="" method="post" enctype="multipart/form-data">\n'
+            string += '\t\t\t\t\t\t{% csrf_token %}\n'
+            string += '\t\t\t\t\t\t{% include ' + "'" + 'layout/form.html' + "'" + ' %}\n'
+            string += '\t\t\t\t\t\t<div class="form-group">\n'
+            string += '\t\t\t\t\t\t\t<div class="col-sm-offset-2 col-sm-10">\n'
+            string += '\t\t\t\t\t\t\t\t<button type="submit" class="btn btn-success">Create ' + str(model.name) + '</button>\n'
+            string += '\t\t\t\t\t\t\t</div>\n'
+            string += '\t\t\t\t\t\t</div>\n'
+            string += '\t\t\t\t\t</form>\n'
+            for element in model.elements:
+                if element.datatype.foreignkey is not None:
+                    string += '\t\t\t\t\t<a href="{% url ' + "'" + 'myapp:' + element.datatype.foreignkey.classs + "CreateView'" + ' %}">\n'
+                    string += '\t\t\t\t\t\t<button class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Add missing ' + element.datatype.foreignkey.classs + '">\n'
+                    string += '\t\t\t\t\t\t\t<span class="glyphicon glyphicon-zoom-in"></span>\n'
+                    string += '\t\t\t\t\t\t</button>\n'
+                    string += '\t\t\t\t\t</a>\n'
+            string += '\t\t\t\t</div>\n'
+            string += '\t\t\t</div>\n'
+            string += '\t\t</div>\n'
+            string += '\t</div>\n'
+            string += '{% endblock %}\n'
+
+            return string
+
+        with open('C:/Users/Johny/Desktop/mrk/mysite/myapp/templates/layout/'+str(model.name)+'CreateView.html', 'w') as f:
+            a = test10(models1, model)
+            f.write(a)

@@ -11,6 +11,10 @@ model Osoba{
 	jmbg = IntegerField(default = 0)
 	bracno_stanje = CharField(max_length = 6)
 	zaposlenje = CharField(max_length = 6, default = 0)
-	email = EmailField(max_length = 64,  null = False)
-	datum_rodjenja = DateTimeField(default = timezone.datetime.year)
+	email = EmailField()
+	datum_rodjenja = DateTimeField(default = timezone.now)
+};
+
+model Predmet{
+    naziv = CharField(max_length = 32, default = 1)
 };

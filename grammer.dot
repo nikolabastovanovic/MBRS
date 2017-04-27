@@ -11,87 +11,87 @@
     edge[dir=black,arrowtail=empty]
 
 
-1908627803832 -> 1908627795336[arrowtail=diamond, dir=both, headlabel="parameters 0..*"]
-1908627803832[ label="{EmailField|}"]
+1373589296648[ label="{Timezone|+var:Var\l}"]
 
-1908627800056[ label="{Value|True\|False}"]
+1373589302312[ label="{OnDelete|on_delete = models.CASCADE}"]
 
-1908627799112[ label="{Number|[0-9]+}"]
+1373589301368 -> 1373589284376[arrowtail=diamond, dir=both, headlabel="models 0..*"]
+1373589301368[ label="{Models|}"]
 
-1908627794392 -> 1908627795336[arrowtail=diamond, dir=both, headlabel="parameters 0..*"]
-1908627794392[ label="{IntegerField|}"]
+1373589297592 -> 1373589286264[arrowtail=diamond, dir=both, headlabel="parameters 0..*"]
+1373589297592[ label="{BooleanField|}"]
 
-1908627801944[ label="{Blank|+value:Value\l}"]
+1373589294760[ label="{Value|True\|False}"]
 
-1908627797224[ label="{MaxLength|+number:Number\l}"]
+1373589303256 -> 1373589295704[arrowtail=diamond, dir=both, headlabel="datatype "]
+1373589303256[ label="{ModelElement|+name:ID\l}"]
 
-1908627802888[ label="{Var|now\|datetime.year\|datetime.month\|datetime.day\|datetime.hour}"]
+1373589295704 -> 1373589300424[arrowtail=diamond, dir=both, headlabel="charfield "]
+1373589295704 -> 1373589282488[arrowtail=diamond, dir=both, headlabel="emailfield "]
+1373589295704 -> 1373589291928[arrowtail=diamond, dir=both, headlabel="foreignkey "]
+1373589295704 -> 1373589285320[arrowtail=diamond, dir=both, headlabel="datetimefield "]
+1373589295704 -> 1373589299480[arrowtail=diamond, dir=both, headlabel="integerfield "]
+1373589295704 -> 1373589297592[arrowtail=diamond, dir=both, headlabel="booleanfield "]
+1373589295704[ label="{DataType|}"]
 
-1908627798168 -> 1908627801000[arrowtail=diamond, dir=both, headlabel="timezone "]
-1908627798168[ label="{Default|+number:Number\l}"]
+1373589290040[ label="{Number|[0-9]+}"]
 
-1908627806664 -> 1908627792504[arrowtail=diamond, dir=both, headlabel="models 0..*"]
-1908627806664[ label="{Models|}"]
+1373589282488 -> 1373589286264[arrowtail=diamond, dir=both, headlabel="parameters 0..*"]
+1373589282488[ label="{EmailField|}"]
 
-1908627805720 -> 1908627795336[arrowtail=diamond, dir=both, headlabel="parameters 0..*"]
-1908627805720[ label="{BooleanField|}"]
+1373589300424 -> 1373589286264[arrowtail=diamond, dir=both, headlabel="parameters 0..*"]
+1373589300424[ label="{CharField|}"]
 
-1908627793448 -> 1908627795336[arrowtail=diamond, dir=both, headlabel="parameters 0..*"]
-1908627793448[ label="{DateTimeField|}"]
+1373589298536[ label="{Var|now\|datetime.year\|datetime.month\|datetime.day\|datetime.hour}"]
 
-1908627808552[ label="{OnDelete|on_delete = models.CASCADE}"]
+1373589291928 -> 1373589286264[arrowtail=diamond, dir=both, headlabel="parameters 0..*"]
+1373589291928[ label="{ForeignKey|+classs:Classs\l}"]
 
-1908627807608[ label="{Null|+value:Value\l}"]
+1373589299480 -> 1373589286264[arrowtail=diamond, dir=both, headlabel="parameters 0..*"]
+1373589299480[ label="{IntegerField|}"]
 
-1908627792504 -> 1908627811384[arrowtail=diamond, dir=both, headlabel="elements 0..*"]
-1908627792504[ label="{Model|+name:ID\l}"]
+1373589293816[ label="{MaxLength|+number:Number\l}"]
 
-1908627796280 -> 1908627790616[arrowtail=diamond, dir=both, headlabel="charfield "]
-1908627796280 -> 1908627803832[arrowtail=diamond, dir=both, headlabel="emailfield "]
-1908627796280 -> 1908627810440[arrowtail=diamond, dir=both, headlabel="foreignkey "]
-1908627796280 -> 1908627793448[arrowtail=diamond, dir=both, headlabel="datetimefield "]
-1908627796280 -> 1908627794392[arrowtail=diamond, dir=both, headlabel="integerfield "]
-1908627796280 -> 1908627805720[arrowtail=diamond, dir=both, headlabel="booleanfield "]
-1908627796280[ label="{DataType|}"]
+1373589283432[ label="{Classs|ID}"]
 
-1908627811384 -> 1908627796280[arrowtail=diamond, dir=both, headlabel="datatype "]
-1908627811384[ label="{ModelElement|+name:ID\l}"]
+1373589286264 -> 1373589293816[arrowtail=diamond, dir=both, headlabel="max_length "]
+1373589286264 -> 1373589290984[arrowtail=diamond, dir=both, headlabel="null "]
+1373589286264 -> 1373589289096[arrowtail=diamond, dir=both, headlabel="default "]
+1373589286264 -> 1373589292872[arrowtail=diamond, dir=both, headlabel="blank "]
+1373589286264[ label="{Parameters|+on_delete:OnDelete\l}"]
 
-1908627791560[ label="{Classs|ID}"]
+1373589285320 -> 1373589286264[arrowtail=diamond, dir=both, headlabel="parameters 0..*"]
+1373589285320[ label="{DateTimeField|}"]
 
-1908627790616 -> 1908627795336[arrowtail=diamond, dir=both, headlabel="parameters 0..*"]
-1908627790616[ label="{CharField|}"]
+1373589289096 -> 1373589296648[arrowtail=diamond, dir=both, headlabel="timezone "]
+1373589289096[ label="{Default|+number:Number\l}"]
 
-1908627810440 -> 1908627795336[arrowtail=diamond, dir=both, headlabel="parameters 0..*"]
-1908627810440[ label="{ForeignKey|+classs:Classs\l}"]
+1373589284376 -> 1373589303256[arrowtail=diamond, dir=both, headlabel="elements 0..*"]
+1373589284376[ label="{Model|+name:ID\l}"]
 
-1908627795336 -> 1908627797224[arrowtail=diamond, dir=both, headlabel="max_length "]
-1908627795336 -> 1908627807608[arrowtail=diamond, dir=both, headlabel="null "]
-1908627795336 -> 1908627798168[arrowtail=diamond, dir=both, headlabel="default "]
-1908627795336 -> 1908627801944[arrowtail=diamond, dir=both, headlabel="blank "]
-1908627795336[ label="{Parameters|+on_delete:OnDelete\l}"]
+1373589292872[ label="{Blank|+value:Value\l}"]
 
-1908627801000[ label="{Timezone|+var:Var\l}"]
+1373589290984[ label="{Null|+value:Value\l}"]
 
-1908627756632[ label="{INT|}"]
+1373589281544[ label="{INT|}"]
 
-1908627787784[ label="{BOOL|}"]
+1373589278712[ label="{STRING|}"]
 
-1908627788728[ label="{BASETYPE|}"]
-1908627788728 -> 1908627804776 [dir=back]
-1908627788728 -> 1908627787784 [dir=back]
-1908627788728 -> 1908627785896 [dir=back]
-1908627788728 -> 1908627786840 [dir=back]
+1373589279656[ label="{FLOAT|}"]
 
-1908627785896[ label="{ID|}"]
+1373589280600[ label="{NUMBER|}"]
+1373589280600 -> 1373589279656 [dir=back]
+1373589280600 -> 1373589281544 [dir=back]
 
-1908627786840[ label="{STRING|}"]
+1373589288152[ label="{BASETYPE|}"]
+1373589288152 -> 1373589280600 [dir=back]
+1373589288152 -> 1373589287208 [dir=back]
+1373589288152 -> 1373589305144 [dir=back]
+1373589288152 -> 1373589278712 [dir=back]
 
-1908627804776[ label="{NUMBER|}"]
-1908627804776 -> 1908627789672 [dir=back]
-1908627804776 -> 1908627756632 [dir=back]
+1373589287208[ label="{BOOL|}"]
 
-1908627789672[ label="{FLOAT|}"]
+1373589305144[ label="{ID|}"]
 
 
 }
