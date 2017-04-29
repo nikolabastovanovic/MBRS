@@ -17,4 +17,5 @@ model Osoba{
 
 model Predmet{
     naziv = CharField(max_length = 32, default = 1)
+    oblast = CharField(max_length = 32, default = 1)
 };
