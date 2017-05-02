@@ -16,9 +16,9 @@ class Migration(migrations.Migration):
 			name='Grad',
 			fields=[
 				('id',models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-				('naziv',models.TextField(max_length=5, null=True)),
-				('oblast',models.TextField(max_length=5)),
-				('postanski_broj',models.CharField(max_length=5, null=True, default=1)),
+				('naziv',models.CharField(max_length=5, null=True)),
+				('oblast',models.CharField(max_length=5)),
+				('postanski_broj',models.IntegerField(null=True, default=1)),
 			],
 		),
 		migrations.CreateModel(
@@ -27,10 +27,20 @@ class Migration(migrations.Migration):
 				('id',models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
 				('grad',models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='myapp.Grad')),
 				('ime',models.CharField(max_length=5, null=True, default=1)),
-				('prezime',models.TextField(max_length=6, null=True)),
-				('jmbg',models.TextField(default=1, max_length=6)),
-				('bracno_stanje',models.TextField(max_length=6)),
+				('prezime',models.CharField(max_length=6, null=True)),
+				('jmbg',models.IntegerField(default=0)),
+				('bracno_stanje',models.CharField(max_length=6)),
 				('zaposlenje',models.CharField(max_length=6, default=0)),
+				('email',models.EmailField()),
+				('datum_rodjenja',models.DateTimeField(default=django.utils.timezone.now)),
+			],
+		),
+		migrations.CreateModel(
+			name='Predmet',
+			fields=[
+				('id',models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+				('naziv',models.CharField(max_length=32, default=1)),
+				('oblast',models.CharField(max_length=32, default=1)),
 			],
 		),
 	]
