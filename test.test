@@ -1,22 +1,22 @@
-model Grad{
-	naziv = CharField(max_length = 5, null = True)
-	oblast = CharField(max_length = 5)
-	postanski_broj = IntegerField(null = True, default = 1)
+model Country{
+	name = CharField(max_length = 32, null = False)
+	region = CharField(max_length = 32, null = False)
+	population = IntegerField(null = False, default = 0)
 };
 
-model Osoba{
-    grad = ForeignKey(model = Grad, on_delete = models.CASCADE)
-	ime = CharField(max_length = 5, null = True, default = 1)
-	prezime = CharField(max_length = 6, null = True)
-	jmbg = IntegerField(default = 0)
-	bracno_stanje = CharField(max_length = 6)
-	zaposlenje = CharField(max_length = 6, default = 0)
-	email = EmailField()
-	datum_rodjenja = DateTimeField(default = timezone.now)
-	pol = BooleanField(default = True)
+model City{
+    country = ForeignKey(model = Country, on_delete = models.CASCADE)
+	name = CharField(max_length = 32, null = False)
+	region = CharField(max_length = 32, null = True)
+	zip_code = IntegerField(default = 0)
 };
 
-model Predmet{
-    naziv = CharField(max_length = 32, default = 1)
-    oblast = CharField(max_length = 32, default = 1)
+model Car_Factory{
+    country = ForeignKey(model = Country, on_delete = models.CASCADE)
+    city = ForeignKey(model = City, on_delete = models.CASCADE)
+    name = CharField(max_length = 32, null = False)
+    address = CharField(max_length = 64, null = False)
+    phone_number = IntegerField(default = 0, null = True)
+    email = EmailField()
+    date_opened = DateTimeField(default = timezone.now)
 };

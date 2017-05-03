@@ -282,8 +282,6 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
             string += '\n\t\t\t],'
             string += '\n\t\t),'
         string += '\n\t]'
-        #md5_object.update(string.encode('utf-8'))
-        #print(md5_object.hexdigest())
         return string
 
 
@@ -455,7 +453,7 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
                     if len(element.datatype.integerfield.parameters) == 0:
                         string += ")"
 
-                    if len(element.datatype.integerfield.parameters) == 1:
+                    elif len(element.datatype.integerfield.parameters) == 1:
                         if element.datatype.integerfield.parameters[0].max_length is not None:
                             string += 'max_length=' + element.datatype.integerfield.parameters[0].max_length.number + ")"
                         if element.datatype.integerfield.parameters[0].null is not None:
@@ -493,13 +491,20 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
                         string += 'null=' + element.datatype.integerfield.parameters[1].null.value + ")"
 
             string += '\n\n'
-            string += "\t'''"
             string += '\n\tdef __str__(self):\n'
             string += '\t\treturn '
+            counter = 0
             for element in model['elements']:
-                string += 'self.' + element.name + '\n'
-                string += '\t\t'
-            string += "\n\t'''"
+                if element.datatype.charfield is not None:
+                    counter = counter + 1
+            for element in model['elements']:
+                if element.datatype.charfield is not None:
+                    string += 'self.' + element.name
+                    counter = counter - 1
+                    if counter == 0:
+                        string += ''
+                    else:
+                        string += ' + ' + '"/"' + ' + '
 
         return string
 
@@ -793,6 +798,11 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
         string += '\t\t\t\t\t<button type="submit" class="btn btn-default">Search</button>\n'
         string += '\t\t\t\t</form>\n'
         string += '\t\t\t\t<ul class="nav navbar-nav navbar-right">\n'
+        string += '\t\t\t\t{% if user.is_superuser %}\n'
+        string += '\t\t\t\t\t<li>\n'
+        string += '\t\t\t\t\t\t<a href="{% url ' + "'" + 'admin:index' + "'" + ' %}">Admin</a>\n'
+        string += '\t\t\t\t\t</li>\n'
+        string += '\t\t\t\t{% endif %}\n'
         string += '\t\t\t\t\t<li>\n'
         string += '\t\t\t\t\t\t<a href="{% url ' + "'" + 'myapp:logout' + "'" + ' %}" style="color:white">\n'
         string += '\t\t\t\t\t\t\t<span class="glyphicon glyphicon-off" aria-hidden="true"></span> LogOut\n'
@@ -822,14 +832,37 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
     def test7(models):
         string = '{% extends '+"'"+'layout/base.html'+"'" + ' %}' +'\n\n'
         string += '{% block body %}\n\n'
+        string += '\t<style>\n'
+        string += '\t\tdiv.one {\n'
+        string += '\t\t\tbackground-color:#F7F3F3;\n'
+        string += '\t\t\tbackground-image:url("http://www.cuded.com/wp-content/uploads/2013/06/30-Black-Background.jpg");\n'
+        string += '\t\t\tcolor:black;\n'
+        string += '\t\t\twidth:25.33%;\n'
+        string += '\t\t\theight:250px;\n'
+        string += '\t\t\tfloat:left;\n'
+        string += '\t\t\tmargin:4%;\n'
+        string += '\t\t\tborder-radius:25%;\n'
+        string += '\t\t}\n'
+        string += '\t\th1.one {\n'
+        string += '\t\t\tposition:relative;\n'
+        string += '\t\t\ttop:35%;\n'
+        string += '\t\t\ttext-align:center;\n'
+        string += '\t\t\tletter-spacing:3px;\n'
+        string += '\t\t}\n'
+        string += '\t\tfont.one {\n'
+        string += '\t\t\tfont-family:Comic sans MS;\n'
+        string += '\t\t\tcolor:red;\n'
+        string += '\t\t}\n'
+        string += '\t</style>\n'
         string += '\t{% if user.is_authenticated %}\n'
 
         for model in models:
             string += '\t\t<a href="{% url ' + "'" + 'myapp:'
             string += str(model['model']) + 'ListView' + "'" + '%}'
             string += '">\n'
-            string += '\t\t\t<div style="background-color:#F7F3F3; color:black; width:25.33%; height:250px; float:left; margin:4%; border-radius:25%">\n'
-            string += '\t\t\t\t' + str(model['model']) + '\n'
+            string += '\t\t\t<div class="one">\n'
+            string += '\t\t\t\t<h1 class="one">'
+            string += '<font class="one">' + str(model['model']) + '</font></h1>\n'
             string += '\t\t\t</div>\n'
             string += '\t\t</a>\n'
 
@@ -930,9 +963,9 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
             string += '\t\t<button style="margin-left:10%; width:100%" class="btn btn-primary">Add New ' + str(model.name) + '</button>\n'
             string += '\t</a>\n'
             string += '\t{% else %}\n'
-            string += '\t\t<h1 align="center">You Are Not Loged In!!!</h1>\n'
+            string += '\t\t<h1 align="center">You Are Not Logged In!!!</h1>\n'
             string += '\t\t<h3 align="center">If You Want To See ' + str(model.name) + 's List, You Have To Be '
-            string += '<a href="{% url ' + "'" + 'myapp:login' + "'" + ' %}">Loged In!!!</a></h3>\n'
+            string += '<a href="{% url ' + "'" + 'myapp:login' + "'" + ' %}">Logged In!!!</a></h3>\n'
             string += '\t{% endif %}\n'
             string += '{% endblock %}\n'
 
@@ -974,9 +1007,9 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
             string += '\t\t</div>\n'
             string += '\t</div>\n'
             string += '\t{% else %}\n'
-            string += '\t\t<h1 align="center">You Are Not Loged In!!!</h1>\n'
+            string += '\t\t<h1 align="center">You Are Not Logged In!!!</h1>\n'
             string += '\t\t<h3 align="center">If You Want To Create/Add New ' + str(model.name) + ', You Have To Be '
-            string += '<a href="{% url ' + "'" + 'myapp:login' + "'" + ' %}">Loged In!!!</a></h3>\n'
+            string += '<a href="{% url ' + "'" + 'myapp:login' + "'" + ' %}">Logged In!!!</a></h3>\n'
             string += '\t{% endif %}\n'
             string += '{% endblock %}\n'
 
@@ -1002,24 +1035,24 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
             string += '\t\t\t\t\t\t<div class="form-group">\n'
             string += '\t\t\t\t\t\t\t<div class="col-sm-offset-2 col-sm-10">\n'
             string += '\t\t\t\t\t\t\t\t<button type="submit" class="btn btn-success">Update ' + str(model.name) + '</button>\n'
+            for element in model.elements:
+                if element.datatype.foreignkey is not None:
+                    string += '\t\t\t\t\t\t\t\t<a href="{% url ' + "'" + 'myapp:' + element.datatype.foreignkey.classs + "CreateView'" + ' %}">\n'
+                    string += '\t\t\t\t\t\t\t\t\t<button type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Add missing ' + element.datatype.foreignkey.classs + '">\n'
+                    string += '\t\t\t\t\t\t\t\t\t\t<span class="glyphicon glyphicon-zoom-in"></span>\n'
+                    string += '\t\t\t\t\t\t\t\t\t</button>\n'
+                    string += '\t\t\t\t\t\t\t\t</a>\n'
             string += '\t\t\t\t\t\t\t</div>\n'
             string += '\t\t\t\t\t\t</div>\n'
             string += '\t\t\t\t\t</form>\n'
-            for element in model.elements:
-                if element.datatype.foreignkey is not None:
-                    string += '\t\t\t\t\t<a href="{% url ' + "'" + 'myapp:' + element.datatype.foreignkey.classs + "CreateView'" + ' %}">\n'
-                    string += '\t\t\t\t\t\t<button class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Add missing ' + element.datatype.foreignkey.classs + '">\n'
-                    string += '\t\t\t\t\t\t\t<span class="glyphicon glyphicon-zoom-in"></span>\n'
-                    string += '\t\t\t\t\t\t</button>\n'
-                    string += '\t\t\t\t\t</a>\n'
             string += '\t\t\t\t</div>\n'
             string += '\t\t\t</div>\n'
             string += '\t\t</div>\n'
             string += '\t</div>\n'
             string += '\t{% else %}\n'
-            string += '\t\t<h1 align="center">You Are Not Loged In!!!</h1>\n'
+            string += '\t\t<h1 align="center">You Are Not Logged In!!!</h1>\n'
             string += '\t\t<h3 align="center">If You Want To Update ' + str(model.name) + ', You Have To Be '
-            string += '<a href="{% url ' + "'" + 'myapp:login' + "'" + ' %}">Loged In!!!</a></h3>\n'
+            string += '<a href="{% url ' + "'" + 'myapp:login' + "'" + ' %}">Logged In!!!</a></h3>\n'
             string += '\t{% endif %}\n'
             string += '{% endblock %}\n'
             return string
@@ -1056,52 +1089,46 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
                     modelll['model']) + '</a></li>\n'
             string += '\t\t\t</ul>\n'
             string += '\t\t</div>\n'
-            string += '\t<table style="width:100%">\n'
-            string += '\t\t<tr bgcolor="#D3D6FF">\n'
 
             for q in models:
                 for element in q['elements']:
                     if element.datatype.foreignkey is not None and element.datatype.foreignkey.classs == model.name:
+                        string += '\t<table style="width:100%">\n'
+                        string += '\t\t<tr bgcolor="#D3D6FF">\n'
                         for element in q['elements']:
                             string += '\t\t\t<th style="text-align:center">' + element.name.upper() + '</th>\n'
-            string += '\t\t\t<th></th>\n'
-            string += '\t\t</tr>\n'
+                        string += '\t\t\t<th style="text-align:center"></th>\n'
+                        string += '\t\t</tr>\n'
+                        string += '\t{% for var in ' + model.name.lower() + '.' + str(q['model']).lower() + '_set.all %}\n'
+                        string += '\t\t<tr>\n'
+                        string += '\t\t\t{% if ' + model.name.lower() + '.id == var.' + model.name.lower() + '.id %}\n'
+                        for element1 in q['elements']:
+                            string += '\t\t\t\t<td style="text-align:center">{{ var.' + element1.name + ' }}</td>\n'
+                        string += '\t\t\t\t<td style="text-align:center">\n'
+                        string += '\t\t\t\t\t<a href="{% url ' + "'" + 'myapp:' + str(q['model']) + 'UpdateView' + "'" + ' var.id %}">\n'
+                        string += '\t\t\t\t\t\t<button type="submit" class="btn btn-warning btn-sm" style="width:47%" data-toggle="tooltip" data-placement="top" title="Edit">\n'
+                        string += '\t\t\t\t\t\t\t<span class="glyphicon glyphicon-edit"></span>\n'
+                        string += '\t\t\t\t\t\t</button>\n'
+                        string += '\t\t\t\t\t</a>\n'
+                        string += '\t\t\t\t\t<form action="{% url ' + "'" + 'myapp:' + str(q['model']) + 'DeleteView' + "'" + ' var.id %}" method="post" style="display: inline;">\n'
+                        string += '\t\t\t\t\t\t{% csrf_token %}\n'
+                        string += '\t\t\t\t\t\t<input type="hidden" name="var_id" value="{{ var.id }}" />\n'
+                        string += '\t\t\t\t\t\t<button type="submit" class="btn btn-danger btn-sm" style="width:47%" data-toggle="tooltip" data-placement="top" title="Delete">\n'
+                        string += '\t\t\t\t\t\t\t<span class="glyphicon glyphicon-trash"></span>\n'
+                        string += '\t\t\t\t\t\t</button>\n'
+                        string += '\t\t\t\t\t</form>\n'
+                        string += '\t\t\t\t</td>\n'
+                        string += '\t\t\t{% endif %}\n'
+                        string += '\t\t</tr>\n'
+                        string += '\t{% endfor %}\n'
+                        string += '\t</table>\n'
+                        string += '\t<h5 align="center"><i>Table shows <b>'+ str(q['model']) + 's</b> for ' + model.name + '</i></h5><br><br><br>\n\n'
 
-            for x in models:
-                for element in x['elements']:
-                    if element.datatype.foreignkey is not None and element.datatype.foreignkey.classs == model.name:
-                        string += '\t{% for var in ' + model.name.lower() + '.' + str(x['model']).lower() + '_set.all %}\n'
-                        a = str(x['model'])
 
-            string += '\t\t<tr>\n'
-            string += '\t\t\t{% if ' + model.name.lower() + '.id == var.' + model.name.lower() + '.id %}\n'
-            for z in models:
-                for element in z['elements']:
-                    if element.datatype.foreignkey is not None and element.datatype.foreignkey.classs == model.name:
-                        for element in z['elements']:
-                            string += '\t\t\t\t<td style="text-align:center">{{ var.' + element.name + ' }}</td>\n'
-            string += '\t\t\t{% endif %}\n'
-            string += '\t\t\t<td>\n'
-            string += '\t\t\t\t<a href="{% url ' + "'" + 'myapp:' + a + 'UpdateView' + "'" + ' var.id %}">\n'
-            string += '\t\t\t\t\t<button type="submit" class="btn btn-warning btn-sm" style="width:47%" data-toggle="tooltip" data-placement="top" title="Edit">\n'
-            string += '\t\t\t\t\t\t<span class="glyphicon glyphicon-edit"></span>\n'
-            string += '\t\t\t\t\t</button>\n'
-            string += '\t\t\t\t</a>\n'
-            string += '\t\t\t\t<form action="{% url ' + "'" + 'myapp:' + a + 'DeleteView' + "'" + ' var.id %}" method="post" style="display: inline;">\n'
-            string += '\t\t\t\t\t{% csrf_token %}\n'
-            string += '\t\t\t\t\t<input type="hidden" name="var_id" value="{{ var.id }}" />\n'
-            string += '\t\t\t\t\t<button type="submit" class="btn btn-danger btn-sm" style="width:47%" data-toggle="tooltip" data-placement="top" title="Delete">\n'
-            string += '\t\t\t\t\t\t<span class="glyphicon glyphicon-trash"></span>\n'
-            string += '\t\t\t\t\t</button>\n'
-            string += '\t\t\t\t</form>\n'
-            string += '\t\t\t</td>\n'
-            string += '\t\t</tr>\n'
-            string += '\t{% endfor %}\n'
-            string += '\t</table>\n'
             string += '\t{% else %}\n'
-            string += '\t\t<h1 align="center">You Are Not Loged In!!!</h1>\n'
+            string += '\t\t<h1 align="center">You Are Not Logged In!!!</h1>\n'
             string += '\t\t<h3 align="center">If You Want To See ' + str(model.name) + 's Detail, You Have To Be '
-            string += '<a href="{% url ' + "'" + 'myapp:login' + "'" + ' %}">Loged In!!!</a></h3>\n'
+            string += '<a href="{% url ' + "'" + 'myapp:login' + "'" + ' %}">Logged In!!!</a></h3>\n'
             string += '\t{% endif %}\n'
             string += '{% endblock %}\n'
             return string
@@ -1147,7 +1174,7 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
             string += '\t\t\t\t{% for var in ' + str(model['model']).lower() + ' %}\n'
             string += '\t\t\t\t<tr>\n'
             for element in model['elements']:
-                string += '\t\t\t\t\t<td>{{ var.' + element.name + ' }}</td>\n'
+                string += '\t\t\t\t\t<td style="text-align:center">{{ var.' + element.name + ' }}</td>\n'
             string += '\t\t\t<td>\n'
             string += '\t\t\t\t<a href="{% url ' + "'" + 'myapp:' + str(model['model']) + 'UpdateView' + "'" + ' var.id %}">\n'
             string += '\t\t\t\t\t<button type="submit" class="btn btn-warning btn-sm" style="width:47%" data-toggle="tooltip" data-placement="top" title="Edit">\n'
@@ -1204,7 +1231,7 @@ def execute(path, grammar_file_name, example_file_name, export_dot, export_png):
         f.write(a)
 
 
-    #Generator templejta form.html
+    #Generator login.html stranice
     def test15(models):
         string = '{% extends ' + "'" + 'layout/base.html' + "'" + '%}\n\n'
         string += '{% block body %}\n'
